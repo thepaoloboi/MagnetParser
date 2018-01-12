@@ -6,13 +6,15 @@ function extractMagnetURLs(innerHTML) {
 
 	var magnetLinks = innerHTML.match(/(magnet:\?[^\s\"]*)/gmi);
 
+	console.log(magnetLinks);
+
 	generateTextContent(magnetLinks);
 }
 
 function generateTextContent(magnetLinks) {
 	var collector;
 
-	collector = "ciao";
+	collector = "";
 
 	if(magnetLinks != null)
 	{
@@ -25,7 +27,8 @@ function generateTextContent(magnetLinks) {
 }
 
 function fillTextArea(textContent) {
-	textAreaMagnetContainervalue = textContent;
+	textAreaMagnetContainer.value = textContent;
+
 	textAreaMagnetContainer.dispatchEvent(new Event('keyup'));
 }
 
@@ -99,12 +102,11 @@ document.addEventListener('DOMContentLoaded', () => {
 	textAreaMagnetContainer = document.getElementById('magnetContainer');
 
 	buttonExtract.addEventListener('click', function() {
-		/*chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+		chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
 				extractMagnetURLs(response.innerHTML);
 			});
-		});*/
-		fillTextArea("textContent");
+		});
 	});
 
 	buttonCopyToClipboard.addEventListener('click', function() {
