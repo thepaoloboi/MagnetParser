@@ -1,23 +1,32 @@
+var buttonExtract;
+var buttonCopyToClipboard;
+var textAreaMagnetContainer;
+
 function extractMagnetURLs(innerHTML) {
+
 	var magnetLinks = innerHTML.match(/(magnet:\?[^\s\"]*)/gmi);
-	
+
 	generateTextContent(magnetLinks);
 }
 
 function generateTextContent(magnetLinks) {
 	var collector;
-	
-	collector = "";
-	
-	for(var i = 0; i < magnetLinks.length; i++) { 
-		collector = collector + magnetLinks[i] + "\n"; 
-	};
-	
+
+	collector = "ciao";
+
+	if(magnetLinks != null)
+	{
+		for(var i = 0; i < magnetLinks.length; i++) {
+			collector = collector + magnetLinks[i] + "\n";
+		};
+	}
+
 	fillTextArea(collector);
 }
 
 function fillTextArea(textContent) {
-	document.getElementById("magnetContainer").value = textContent;
+	textAreaMagnetContainervalue = textContent;
+	textAreaMagnetContainer.dispatchEvent(new Event('keyup'));
 }
 
 function copyTextToClipboard(text) {
@@ -76,23 +85,36 @@ function copyTextToClipboard(text) {
   document.body.removeChild(textArea);
 }
 
+function enableButtonCopyToClipboard()
+{
+	buttonCopyToClipboard.disabled = (textAreaMagnetContainer.value == "");
+}
+
 /* -- -- -- -- -- -- -- -- */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-	var buttonExtract = document.getElementById('buttonExtract');
-	var buttonCopyToClipboard = document.getElementById('buttonCopyToClip');
+	buttonExtract = document.getElementById('buttonExtract');
+	buttonCopyToClipboard = document.getElementById('buttonCopyToClip');
+	textAreaMagnetContainer = document.getElementById('magnetContainer');
 
-	buttonExtract.addEventListener('click', function() {	  
-		chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
+	buttonExtract.addEventListener('click', function() {
+		/*chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
 				extractMagnetURLs(response.innerHTML);
-			});	  
-		});
+			});
+		});*/
+		fillTextArea("textContent");
 	});
-	
-	buttonCopyToClipboard.addEventListener('click', function() {	  
-		copyTextToClipboard(document.getElementById("magnetContainer").value);
-	});
-});
 
+	buttonCopyToClipboard.addEventListener('click', function() {
+		copyTextToClipboard(textAreaMagnetContainer.value);
+	});
+
+	textAreaMagnetContainer.addEventListener('keyup', function() {
+		enableButtonCopyToClipboard();
+		console.log('changed');
+	});
+
+	enableButtonCopyToClipboard();
+});
