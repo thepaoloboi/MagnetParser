@@ -11,8 +11,8 @@ h2 {
   font-size: 16px;
 }
 
-#container {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
+textarea {
+  resize: none;
 }
+
+#copiedMessageText { display: none; }

@@ -2,13 +2,13 @@ var buttonExtract;
 var buttonCopyToClipboard;
 var textAreaMagnetContainer;
 
-function extractMagnetURLs(innerHTML) {
+function handleButtonExtract_click(hrefs) {
 
-	var magnetLinks = innerHTML.match(/(magnet:\?[^\s\"]*)/gmi);
+  var text = generateTextContent(hrefs);
 
-	console.log(magnetLinks);
+  fillTextArea(text);
 
-	generateTextContent(magnetLinks);
+  toggleCopiedMessagetext(true);
 }
 
 function generateTextContent(magnetLinks) {
@@ -19,11 +19,11 @@ function generateTextContent(magnetLinks) {
 	if(magnetLinks != null)
 	{
 		for(var i = 0; i < magnetLinks.length; i++) {
-			collector = collector + magnetLinks[i] + "\n";
+			collector = collector + magnetLinks[i] + "\n\n";
 		};
-	}
-
-	fillTextArea(collector);
+  }
+  
+  return collector;	
 }
 
 function fillTextArea(textContent) {
@@ -86,6 +86,8 @@ function copyTextToClipboard(text) {
   }
 
   document.body.removeChild(textArea);
+
+  toggleCopiedMessagetext(false);
 }
 
 function enableButtonCopyToClipboard()
@@ -93,18 +95,22 @@ function enableButtonCopyToClipboard()
 	buttonCopyToClipboard.disabled = (textAreaMagnetContainer.value == "");
 }
 
+function toggleCopiedMessagetext(hide) {
+  document.getElementById('copiedMessageText').style.display = hide == true ? "none" : "inline";
+}
+
 /* -- -- -- -- -- -- -- -- */
 
 document.addEventListener('DOMContentLoaded', () => {
 
 	buttonExtract = document.getElementById('buttonExtract');
-	buttonCopyToClipboard = document.getElementById('buttonCopyToClip');
+  buttonCopyToClipboard = document.getElementById('buttonCopyToClip');
 	textAreaMagnetContainer = document.getElementById('magnetContainer');
 
 	buttonExtract.addEventListener('click', function() {
 		chrome.tabs.query({active: true, currentWindow: true}, function (tabs) {
 			chrome.tabs.sendMessage(tabs[0].id, {greeting: "hello"}, function(response) {
-				extractMagnetURLs(response.innerHTML);
+				handleButtonExtract_click(response.hrefs);
 			});
 		});
 	});
