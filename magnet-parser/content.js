@@ -7,7 +7,8 @@ function extractHrefStringsFromNodes(nodes) {
 	var node, hrefStrings = [];
   
 	while (node = nodes.iterateNext()) {
-		hrefStrings.push(node.getAttribute('href'));
+		var href = node.getAttribute('href');
+		hrefStrings.push(href.trim());
 	}
 
 	return hrefStrings;
